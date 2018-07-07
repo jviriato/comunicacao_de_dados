@@ -14,7 +14,7 @@ class Client:
 
     def start_connection(self):
         print("Conectado")
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.connect(self.origem)
 
     def close_connection(self):
@@ -22,10 +22,10 @@ class Client:
         self._socket.close()
 
     def send_msg(self):
-        bytes_file = self.file.read(1024)
-        while(bytes_file):
-            self._socket.send("bytes_file")
-            bytes_file = self.file.read(1024)
+        bytes_file = self.file.read(1024)     #bytes_file = 1KB do arquivo
+        while(bytes_file):                    #enquanto restar arquivo
+            self._socket.send(bytes_file)     #manda os KB
+            bytes_file = self.file.read(1024) #reseta os bytes
         self.close_connection()
 
 
