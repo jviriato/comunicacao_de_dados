@@ -24,13 +24,15 @@ class Server:
         self._socket.listen(5)
         f = open("rani.jpg", 'wb')
         while True:
+            print("Esperando...")
             c, addr = self._socket.accept()
-            print("Conexao de:" + addr)
+            print("Conexao de:" + str(addr))
             l = c.recv(1024)
             while(l):
                 f.write(l)
                 l = c.recv(1024)
             f.close()
+        self.close_connection()
 
 def main():
     s = Server()
