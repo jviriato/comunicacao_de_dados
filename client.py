@@ -29,7 +29,7 @@ class Client:
             bytes_file = self.file.read(1024)           # reseta os bytes
         self.close_connection()
 
-    def checksum(self):
+    def checksum(self, bytes_file):
         sum_of_checksum = str(bin(sum(bytes_file)))     # soma os bytes, transforma em binario e em string
         sum_of_checksum = sum_of_checksum[2:]           # tira os dois primeiros bytes
         sum_of_checksum = sum_of_checksum + str('0101') # para teste
@@ -56,7 +56,7 @@ class Client:
         ini_end = '@'                                   # inicio e fim do frame
         frame = ini_end                                 # frame começa com @
         frame = frame + str(bytes_file)                 # coloca os dados no frame
-        frame = frame + str(self.checksum())            # coloca o checksum no frame
+        frame = frame + str(self.checksum(bytes_file))  # coloca o checksum no frame
         frame = frame + ini_end                         # frame termina com @
 
         return frame
