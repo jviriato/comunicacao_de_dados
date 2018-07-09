@@ -22,23 +22,42 @@ class Client:
         self._socket.close()
 
     def send_msg(self):
-        bytes_file = self.file.read(1024)         # bytes_file = 1KB do arquivo
-        while (bytes_file):                       # enquanto restar arquivo
-            frame = self.delimitacao_frame(bytes_file) # monta o frame
-            self._socket.send(frame)              # manda o frame
-            bytes_file = self.file.read(1024)     # reseta os bytes
+        bytes_file = self.file.read(1024)               # bytes_file = 1KB do arquivo
+        while (bytes_file):                             # enquanto restar arquivo
+            frame = self.delimitacao_frame(bytes_file)  # monta o frame
+            self._socket.send(frame)                    # manda o frame
+            bytes_file = self.file.read(1024)           # reseta os bytes
         self.close_connection()
 
     def checksum(self):
-        checksum = 1
+        sum_of_checksum = str(bin(sum(bytes_file)))     # soma os bytes, transforma em binario e em string
+        sum_of_checksum = sum_of_checksum[2:]           # tira os dois primeiros bytes
+        sum_of_checksum = sum_of_checksum + str('0101') # para teste
+        len_sum = len(sum_of_checksum)                  # tamanho da soma
+
+        while(len_sum > 16):                            # checksum tem que ser no maximo de tamanho 16, se não
+            lim = len_sum - 16                          # bytes mais a esquerda
+            extra = sum_of_checksum[:lim]               # separados para a soma
+            sum_of_checksum = sum_of_checksum[lim:]     # retirados da soma
+            sum_of_checksum = '0b' + sum_of_checksum
+            extra = '0b' + extra
+            print(sum_of_checksum)
+            print(extra)
+            sum_of_checksum = sum_of_checksum and extra # soma do extra com a soma
+            print(sum_of_checksum)
+            len_sum = len(sum_of_checksum)
+
+        checksum = not sum_of_checksum                  # complemento e final do checksum
+        print(checksum)
+        return checksum
 
 
-    def delimitacao_frame(self, bytes_file):      # @ header data trailer @
-        ini_end = '@'                             # inicio e fim do frame
-        frame = ini_end                           # frame começa com @
-        frame = frame + str(bytes_file)           # coloca os dados no frame
-        frame = frame + str(self.checksum())      # coloca o checksum no frame
-        frame = frame + ini_end                   # frame termina com @
+    def delimitacao_frame(self, bytes_file):            # @ header data trailer @
+        ini_end = '@'                                   # inicio e fim do frame
+        frame = ini_end                                 # frame começa com @
+        frame = frame + str(bytes_file)                 # coloca os dados no frame
+        frame = frame + str(self.checksum())            # coloca o checksum no frame
+        frame = frame + ini_end                         # frame termina com @
 
         return frame
 
