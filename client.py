@@ -71,11 +71,8 @@ class Client:
         ini_end = '@'                                   # inicio e fim do frame
         frame = ini_end                                 # frame começa com @
         frame = frame + str(bytes_file)                 # coloca os dados no frame
-<<<<<<< HEAD
-        frame = frame + str(self.checksum(bytes_file))            # coloca o checksum no frame
-=======
         frame = frame + str(self.checksum(bytes_file))  # coloca o checksum no frame
->>>>>>> 9f7c53920a8b44c11a72e061ae8401df2c8a4a30
+        frame = frame + str(self.checksum(bytes_file))  # coloca o checksum no frame
         frame = frame + ini_end                         # frame termina com @
 
         return frame
