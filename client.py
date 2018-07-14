@@ -24,8 +24,10 @@ class Client:
 
     def send_msg(self):
         bytes_file = self.file.read(1024)                    # bytes_file = 1KB do arquivo
+        id = 0                                               # contador para os frames
         while (bytes_file):                                  # enquanto restar arquivo
-            frame = self.delimitacao_frame(bytes_file)       # monta o frame
+            id = id + 1                                      # incrementa o id
+            frame = self.delimitacao_frame(bytes_file, id)   # monta o frame
             self._socket.send(frame)                         # manda o frame
             bytes_file = self.file.read(1024)                # reseta os bytes
         self.close_connection()
@@ -52,9 +54,10 @@ class Client:
         return checksum
 
 
-    def delimitacao_frame(self, bytes_file):                 # @ header data trailer @
+    def delimitacao_frame(self, bytes_file, id):             # @ header data trailer @
         ini_end = '@'                                        # inicio e fim do frame
         frame = ini_end                                      # frame começa com @
+        frame = frame + str(id)                              # logo após vem o id
         frame = frame + str(bytes_file)                      # coloca os dados no frame
         frame = frame + str(self.checksum(bytes_file))       # coloca o checksum no frame
         frame = frame + ini_end                              # frame termina com @
