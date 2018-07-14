@@ -35,7 +35,7 @@ class Client:
         id = 0                                               # contador para os frames
         while (bytes_file):                                  # enquanto restar arquivo
             id = id + 1                                      # incrementa o id
-            bytes_file = self.bytestuffing(bytes_file)       # antes de enviar, faz o bytestuffing
+            #bytes_file = self.bytestuffing(bytes_file)       # antes de enviar, faz o bytestuffing
             frame = self.delimitacao_frame(bytes_file, id)   # monta o frame
             self._socket.send(frame)                         # manda o frame
             bytes_file = self.file.read(1024)                # reseta os bytes
@@ -61,6 +61,11 @@ class Client:
 
         checksum = str(bin(xor(sum_of_checksum, mask)))[2:]  # inversão dos bits com xor e retirada dos dois primeiros bits
         return checksum
+    
+    def origem_destino(self):
+        ip_porta = self.TCP_IP + str(self.TCP_PORT)
+
+        return ip_porta
 
       # | Flag | ID | Data | Checksum | Flag |
 
@@ -68,6 +73,7 @@ class Client:
         ini_end = '@'                                        # inicio e fim do frame
         frame = ini_end                                      # frame começa com @
         frame = frame + str(id)                              # logo após vem o id
+        frame = frame + self.origem_destino()                     # coloca a origem
         frame = frame + str(bytes_file)                      # coloca os dados no frame
         frame = frame + str(self.checksum(bytes_file))       # coloca o checksum no frame
         frame = frame + ini_end                              # frame termina com @
