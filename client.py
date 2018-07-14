@@ -44,19 +44,16 @@ class Client:
             sum_of_checksum = sum_of_checksum[2:]            # os dois primeiros bits '0b' são retirados
             len_sum = len(sum_of_checksum)                   # o tamanho da string é passado para a variável
 
-        sum_of_checksum = int(sum_of_checksum)
+        mask = ""
+        for x in range(0, len(sum_of_checksum)):
+            mask += '1'
+        sum_of_checksum = int(sum_of_checksum, 2)
+        mask = int(mask, 2)
         print(sum_of_checksum)
-        
-        checksum = str(bin(~sum_of_checksum & 0xFFFF))[2:]   # complemento e final do checksum
-        
-        #outros 2 jeitos pq o de cima n da certo
-        sum_of_checksum = list(sum_of_checksum)
-        print(sum_of_checksum)
-                                    # [F, T][Teste]
-        checksum = list(map(lambda c: [0, 1][c == 0], sum_of_checksum))
-        print(checksum)
-        checksum = [1 if c == 0 else 0 for c in sum_of_checksum] 
-        
+        print(mask)
+
+
+        checksum = bin(sum_of_checksum ^ mask)
         print(checksum)
         return checksum
 
