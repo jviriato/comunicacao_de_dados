@@ -21,12 +21,21 @@ class Client:
     def close_connection(self):
         self.file.close()
         self._socket.close()
+    
+    def bytestuffing(self, bytes_file):
+
+        bytes_file = str(bytes_file)                         # passa para string
+        bytes_file2 = bytes_file.replace('ESC', 'ESCESC')    # escapa o escape primeiro
+        bytes_file3 = bytes_file2.replace('@', 'ESC@')       # escapa a flag
+
+        return bytes_file3
 
     def send_msg(self):
         bytes_file = self.file.read(1024)                    # bytes_file = 1KB do arquivo
         id = 0                                               # contador para os frames
         while (bytes_file):                                  # enquanto restar arquivo
             id = id + 1                                      # incrementa o id
+            bytes_file = self.bytestuffing(bytes_file)       # antes de enviar, faz o bytestuffing
             frame = self.delimitacao_frame(bytes_file, id)   # monta o frame
             self._socket.send(frame)                         # manda o frame
             bytes_file = self.file.read(1024)                # reseta os bytes
