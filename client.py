@@ -72,7 +72,6 @@ class Client:
         frame = ini_end                                 # frame começa com @
         frame = frame + str(bytes_file)                 # coloca os dados no frame
         frame = frame + str(self.checksum(bytes_file))  # coloca o checksum no frame
-        frame = frame + str(self.checksum(bytes_file))  # coloca o checksum no frame
         frame = frame + ini_end                         # frame termina com @
 
         return frame
