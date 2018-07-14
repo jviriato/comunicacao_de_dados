@@ -2,6 +2,7 @@
 
 import socket
 import sys
+from operator import xor
 
 class Client:
     def __init__(self, filename):
@@ -44,17 +45,10 @@ class Client:
             sum_of_checksum = sum_of_checksum[2:]            # os dois primeiros bits '0b' são retirados
             len_sum = len(sum_of_checksum)                   # o tamanho da string é passado para a variável
 
-        mask = ""
-        for x in range(0, len(sum_of_checksum)):
-            mask += '1'
-        sum_of_checksum = int(sum_of_checksum, 2)
-        mask = int(mask, 2)
-        print(sum_of_checksum)
-        print(mask)
+        mask = 0xFFFF                                        # mascara de 16 bits 1
+        sum_of_checksum = int(sum_of_checksum, 2)            
 
-
-        checksum = bin(sum_of_checksum ^ mask)
-        print(checksum)
+        checksum = str(bin(xor(sum_of_checksum, mask)))[2:]  # inversão dos bits com xor e retirada dos dois primeiros biyts
         return checksum
 
 
