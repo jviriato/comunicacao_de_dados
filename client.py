@@ -53,6 +53,7 @@ class Client:
         checksum = str(bin(xor(sum_of_checksum, mask)))[2:]  # inversão dos bits com xor e retirada dos dois primeiros bits
         return checksum
 
+      # | Flag | ID | Data | Checksum | Flag |
 
     def delimitacao_frame(self, bytes_file, id):             # @ header data trailer @
         ini_end = '@'                                        # inicio e fim do frame
