@@ -48,6 +48,15 @@ class Client:
         print(sum_of_checksum)
         
         checksum = str(bin(~sum_of_checksum & 0xFFFF))[2:]   # complemento e final do checksum
+        
+        #outros 2 jeitos pq o de cima n da certo
+        sum_of_checksum = list(sum_of_checksum)
+        print(sum_of_checksum)
+                                    # [F, T][Teste]
+        checksum = list(map(lambda c: [0, 1][c == 0], sum_of_checksum))
+        print(checksum)
+        checksum = [1 if c == 0 else 0 for c in sum_of_checksum] 
+        
         print(checksum)
         return checksum
 
