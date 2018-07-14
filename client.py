@@ -48,7 +48,7 @@ class Client:
         mask = 0xFFFF                                        # mascara de 16 bits 1
         sum_of_checksum = int(sum_of_checksum, 2)            
 
-        checksum = str(bin(xor(sum_of_checksum, mask)))[2:]  # inversão dos bits com xor e retirada dos dois primeiros biyts
+        checksum = str(bin(xor(sum_of_checksum, mask)))[2:]  # inversão dos bits com xor e retirada dos dois primeiros bits
         return checksum
 
 
