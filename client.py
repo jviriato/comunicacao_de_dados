@@ -35,13 +35,20 @@ class Client:
         id = 0                                               # contador para os frames
         while (bytes_file):                                  # enquanto restar arquivo
             id = id + 1                                      # incrementa o id
-            #bytes_file = self.bytestuffing(bytes_file)       # antes de enviar, faz o bytestuffing
+            bytes_file = self.bytestuffing(bytes_file)       # antes de enviar, faz o bytestuffing
             frame = self.delimitacao_frame(bytes_file, id)   # monta o frame
             self._socket.send(frame)                         # manda o frame
             bytes_file = self.file.read(1024)                # reseta os bytes
         self.close_connection()
 
     def checksum(self, bytes_file):
+        bytes_file = list(bytes_file)                        # separa os bytes em uma lista, já que bytes_file é uma string
+        i = 0                                                # inicia o contador
+        for bytes in bytes_file:                             # para to.do byte em bytes_file
+            bytes = ord(bytes)                               # pega o valor da tabela ascii
+            bytes_file[i] = bytes                            # atualiza a lista
+            i = i + 1                                        # atualiza contador
+
         sum_of_checksum = str(bin(sum(bytes_file)))          # soma os bytes, transforma em binario e em string
         sum_of_checksum = sum_of_checksum[2:]                # tira os dois primeiros bytes
         sum_of_checksum = sum_of_checksum + str('0101')      # para teste
@@ -63,26 +70,22 @@ class Client:
         return checksum
     
     def origem_destino(self):
-        ip_porta = self.TCP_IP + str(self.TCP_PORT)
+        ip_porta = self.TCP_IP + str(self.TCP_PORT)          # origem é igual ao ip + porta (as duas são strings e se concatenam)
 
         return ip_porta
 
-      # | Flag | ID | Data | Checksum | Flag |
+      # | Flag | ID | Ori/Dest | Data | Checksum | Flag |
 
     def delimitacao_frame(self, bytes_file, id):             # @ header data trailer @
         ini_end = '@'                                        # inicio e fim do frame
         frame = ini_end                                      # frame começa com @
         frame = frame + str(id)                              # logo após vem o id
-        frame = frame + self.origem_destino()                     # coloca a origem
+        frame = frame + self.origem_destino()                # coloca a origem
         frame = frame + str(bytes_file)                      # coloca os dados no frame
         frame = frame + str(self.checksum(bytes_file))       # coloca o checksum no frame
         frame = frame + ini_end                              # frame termina com @
 
         return frame
-
-        # header = endereços de origem e destino e outras infos de controle   header = go back n ARQ
-        # trailer = bits redundantes para detecção e correção de erros        trailer = ARQ, checksum
-        # data = + byte-stuffing
 
 def main():
     c = Client('raniery.jpg')
