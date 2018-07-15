@@ -79,12 +79,13 @@ class Client:
     def delimitacao_frame(self, bytes_file, id):             # @ header data trailer @
         ini_end = '@'                                        # inicio e fim do frame
         frame = ini_end                                      # frame começa com @
-        frame = frame + str(id)                              # logo após vem o id
+        frame = frame + bin(id)                              # logo após vem o id
         frame = frame + self.origem_destino()                # coloca a origem
         frame = frame + str(bytes_file)                      # coloca os dados no frame
-        frame = frame + str(self.checksum(bytes_file))       # coloca o checksum no frame
+        frame = frame + self.checksum(bytes_file)            # coloca o checksum no frame
         frame = frame + ini_end                              # frame termina com @
-
+        
+        frame = frame.encode('UTF-8)
         return frame
 
 def main():
