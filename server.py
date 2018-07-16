@@ -93,14 +93,18 @@ class Server:
 
         check_id = self.trata_id(id)                                      # manda o id para a função e retorna se está certo
         if check_id == 0: pass                                            # se o retorno for 0, o id está certo, passa para o outro tratamento
-        #else: ..........                                                 # se não, ....
+        else:                                                             # se não, frame(s) anterior(es) foi(foram) perdido(s)
+            self.frames_perdidos = self.frames_perdidos + 1               # acrescenta a variavel de frames perdidos em 1
+            #não envia ack?
         check_origem = self.trata_origem(origem)                          # manda a origem para a função de tratamento
         if check_origem == 0: pass                                        # se o retorno for 0, a origem está certa, passa para o outro tratamento
-        #else: ..........                                                 # se não, ...
+        else:                                                             # se não, frame enviado com erro
+            self.frames_com_erro = self.frames_com_erro + 1               # acrescenta a variavel de frames com erro em 1
         check_checksum = self.trata_checksum(dados, checksum)             # manda os dados e o checksum para o tratamento
         if check_checksum == 0: pass                                      # se o retorno for 0, significa que o checksum estava certo
-        #else: ..........                                                 # se não, estava errado e ....
-
+        else:                                                             # se não, frame enviado com erro
+            self.frames_com_erro = self.frames_com_erro + 1               # acrescenta a variavel de frames com erro em 1
+        
     def receive_msg(self):
         self._socket.listen(5)
         f = open("rani.jpg", 'wb')
