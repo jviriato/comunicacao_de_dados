@@ -63,17 +63,18 @@ class Server:
         return checksum
 
     def trata_frame(self, frame):
-        inicio_frame = 0                                                  #
-        fim_frame = 0                                                     #
-        frame = frame.decode('UTF-8')                                     #
-        frame = str(frame)                                                #
-        for i, c in enumerate(frame):                                     #
-            if c == '@' and self.achou == 0:                              #
-                inicio_frame = i                                          #
-                self.achou = 1                                            #
-            elif c == '@' and self.achou == 1 and frame[i-3:i] != 'ESC':  #
-                fim_frame = i                                             #
-        self.frame = frame[inicio_frame:fim_frame + 1]                    #
+        inicio_frame = 0                                                  # variavel do inicio do frame é inicializada
+        fim_frame = 0                                                     # variavel do fim do frame é inicializada
+        frame = frame.decode('UTF-8')                                     # frame é decodificado
+        frame = str(frame)                                                # variavel é passada para string
+        for i, c in enumerate(frame):                                     # para to.do c no frame
+            if c == '@' and self.achou == 0:                              # se c for igual a flag inicial @ e ainda não achou nenhum flag
+                inicio_frame = i                                          # inicio do frame é igual ao indice de c
+                self.achou = 1                                            # e achou é igual a 1
+            elif c == '@' and self.achou == 1 and frame[i-3:i] != 'ESC':  # se achou outra flag, já tinha achado outra antes e as 3 letras anteriores não forem ESC
+                fim_frame = i                                             # fim do frame é igual ao indice de c
+        self.frame = frame[inicio_frame:fim_frame + 1]                    # coloca os limites no frame
+                                                                          
                                                                           # conforme apresentado na classe cliente
         id = self.frame[1:9]                                              # id tem 8 bits, de 1 até 9
         origem = self.frame[9:25]                                         # origem/destino tem 16 bits, de 9 até 25
