@@ -14,6 +14,7 @@ class Server:
 
         self.achou = 0
         self.frame = None
+        self.cont_id = 0
 
         self.start_connection()
 
