@@ -35,17 +35,18 @@ class Server:
                 self.achou = 1
             elif c == '@' and self.achou == 1 and frame[i-3:i] != 'ESC':
                 fim_frame = i
-                self.achou = 0
-        self.frame = frame[inicio_frame:fim_frame+1]
+        self.frame = frame[inicio_frame:fim_frame + 1]
 
-        id = self.frame[1]
-        origem = self.frame[2:15]
-        checksum = self.frame[-16:-1]
-        checksum = int(checksum, 2)
+        print(frame)
+        id = self.frame[1:9]
+        origem = self.frame[9:25]
+        dados = self.frame[25:-17]
+        checksum = self.frame[-17:-1]
         print(id)
         print(origem)
+        print(dados)
         print(checksum)
-
+        
 
     def receive_msg(self):
         self._socket.listen(5)
