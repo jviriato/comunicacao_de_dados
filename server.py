@@ -2,10 +2,9 @@
 
 import socket
 import sys
-
+from operator import xor
 
 class Server:
-
 
     def __init__(self):
         self.TCP_IP = '127.0.0.1'
@@ -59,9 +58,20 @@ class Server:
         sum_of_checksum = int(sum_of_checksum, 2)
 
         checksum = str(bin(xor(sum_of_checksum, mask)))[2:]               # inversão dos bits com xor e retirada dos dois primeiros bits
-        print(checksum)
         return checksum
-
+    
+    def trata_origem(self, origem):
+        for i, c in enumerate(origem):                                    # para to.do c na string origem
+            if c == 'x':                                                  # se o caractere c for igual a x
+                lim = i                                                   # a seperação terá que ser feita aí, então limite = indice
+                break                                                     # já pode sair do for
+        ip = origem[:lim]                                                 # a primeira parte é o ip
+        porta = origem[lim:].replace('x', '')                             # a segunda parte é a porta, retirando os xs a mais
+        if ip == self.TCP_IP and porta == self.TCP_PORT:
+            return 0
+        else:
+            return 1
+    
     def trata_frame(self, frame):
         inicio_frame = 0                                                  # variavel do inicio do frame é inicializada
         fim_frame = 0                                                     # variavel do fim do frame é inicializada
@@ -81,14 +91,15 @@ class Server:
         dados = self.frame[25:-17]                                        # os dados vão de 25 até onde começa o checksum
         checksum = self.frame[-17:-1]                                     # checksum são os 17 ultimos dados, sem contar com flag final
 
-        check_id = self.trata_id(id)                                      # manda o id para a função e rotorna se está certo
+        check_id = self.trata_id(id)                                      # manda o id para a função e retorna se está certo
         if check_id == 0: pass                                            # se o retorno for 0, o id está certo, passa para o outro tratamento
         #else: ..........                                                 # se não, ....
-        #self.trata_origem(origem)
+        check_origem = self.trata_origem(origem)                          # manda a origem para a função de tratamento
+        if check_origem == 0: pass                                        # se o retorno for 0, a origem está certa, passa para o outro tratamento
+        #else: ..........                                                 # se não, ...
         check_checksum = self.trata_checksum(dados, checksum)             # manda os dados e o checksum para o tratamento
         if check_checksum == 0: pass                                      # se o retorno for 0, significa que o checksum estava certo
         #else: ..........                                                 # se não, estava errado e ....
-
 
     def receive_msg(self):
         self._socket.listen(5)
