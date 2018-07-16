@@ -75,7 +75,7 @@ class Client:
         if i != 16:                                            # se for != de 16
             ip_porta = list(ip_porta)                          # transforma em lista
             while i != 16:                                     # enquanto for menor que 16
-                ip_porta.append('0')                           # completa com 0
+                ip_porta.append('x')                           # completa com x
                 i = i + 1                                      # incrementa o contador
         ip_porta = "".join(ip_porta)                           # reune a lista
         
