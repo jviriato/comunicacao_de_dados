@@ -3,6 +3,7 @@
 import socket
 import sys
 from operator import xor
+import numpy as np
 
 class Client:
     def __init__(self, filename):
@@ -71,15 +72,25 @@ class Client:
     
     def origem_destino(self):
         ip_porta = self.TCP_IP + str(self.TCP_PORT)          # origem é igual ao ip + porta (as duas são strings e se concatenam)
-
-        return ip_porta
+        
+        i = len(ip_porta)                                    # tamanho da string
+        if i != 16:                                          # se for != de 16
+            ip_porta = list(ip_porta)                        # transforma em lista
+            while i != 16:                                   # enquanto for menor que 16
+                ip_porta.append('0')                         # completa com 0
+                i = i + 1                                    # incrementa o contador
+        ip_porta = "".join(ip_porta)                         # reune a lista
+        
+        return str(ip_porta)
 
       # | Flag | ID | Ori/Dest | Data | Checksum | Flag |
+      # 0      8    14         30     ?         +16     +8
+      # 0     +8    +6        +16     ?         +16     +8
 
     def delimitacao_frame(self, bytes_file, id):             # @ header data trailer @
         ini_end = '@'                                        # inicio e fim do frame
         frame = ini_end                                      # frame começa com @
-        frame = frame + bin(id)                              # logo após vem o id
+        frame = frame + str(np.uint64(str(bin(id))[2:]))     # logo após vem o id
         frame = frame + self.origem_destino()                # coloca a origem
         frame = frame + str(bytes_file)                      # coloca os dados no frame
         frame = frame + self.checksum(bytes_file)            # coloca o checksum no frame
