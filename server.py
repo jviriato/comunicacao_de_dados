@@ -6,10 +6,14 @@ import sys
 
 class Server:
 
+
     def __init__(self):
         self.TCP_IP = '127.0.0.1'
         self.TCP_PORT = 5010
         self.destino = (self.TCP_IP, self.TCP_PORT)
+
+        self.achou = 0
+        self.frame = None
 
         self.start_connection()
 
@@ -24,6 +28,26 @@ class Server:
     def close_connection(self):
         self._socket.close()
 
+    def trata_frame(self, frame):
+        inicio_frame = 0
+        fim_frame = 0
+        frame = frame.decode('UTF-8')
+        frame = str(frame)
+        for i, c in enumerate(frame):
+            if c == '@' and self.achou == 0:
+                inicio_frame = i
+                self.achou = 1
+            elif c == '@' and self.achou == 1 and frame[i-3:i] != 'ESC':
+                fim_frame = i
+                self.achou = 0
+        self.frame = frame[inicio_frame:fim_frame+1]
+
+        id = self.frame[1]
+        origem = self.frame[2:15]
+        checksum = self.frame[-16:-1]
+        checksum = int(checksum, 2)
+
+
     def receive_msg(self):
         self._socket.listen(5)
         f = open("rani.jpg", 'wb')
@@ -31,12 +55,12 @@ class Server:
             print("Esperando...")
             c, addr = self._socket.accept()
             print("Conexao de:" + str(addr))
-            l = c.recv(1024)
+            l = c.recv(4096)
             self.trata_frame(l)
             while(l):
                 f.write(l)
-                l = c.recv(1024)
-                self.trata_frame(l)
+                l = c.recv(4096)
+                # self.trata_frame(l)
             f.close()
         self.close_connection()
 
