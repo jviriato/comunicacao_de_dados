@@ -89,7 +89,7 @@ class Client:
         if i != 8:                                             # se for menor do que 8
             num = list(num)                                    # tranforma em uma lista
             while i != 8:                                      # enquanto for menor que 8
-                num.append('0')                                # adiciona 0s
+                num.insert(0, 'x')                             # adiciona xs no começo
                 i = i + 1                                      # incrementa o contador
         num = "".join(num)                                     # reune a lista
 
