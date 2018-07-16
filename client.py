@@ -3,7 +3,6 @@
 import socket
 import sys
 from operator import xor
-import numpy as np
 
 class Client:
     def __init__(self, filename):
@@ -97,8 +96,8 @@ class Client:
     
 
       # | Flag | ID | Ori/Dest | Data | Checksum | Flag |
-      # 0      8    16         32     ?         +16     +8
-      # 0     +8    +8        +16     ?         +16     +8
+      # 0      1    9          25     ?         +16     +1
+      # 0     +1    +8        +16     ?         +16     +1
 
     def delimitacao_frame(self, bytes_file, id):               # @ header data trailer @
         ini_end = '@'                                          # inicio e fim do frame
