@@ -51,7 +51,6 @@ class Client:
 
         sum_of_checksum = str(bin(sum(bytes_file)))            # soma os bytes, transforma em binario e em string
         sum_of_checksum = sum_of_checksum[2:]                  # tira os dois primeiros bytes
-        sum_of_checksum = sum_of_checksum + str('0101')        # para teste
         len_sum = len(sum_of_checksum)                         # tamanho da soma
 
         while(len_sum > 16):                                   # checksum tem que ser no maximo de tamanho 16, se não
