@@ -32,7 +32,35 @@ class Server:
             return 0
         else:                                                             # se não, está errado
             return 1
+    
+    def trata_checksum(self, dados, checksum):
+        dados = list(dados)                                               # separa os bytes em uma lista, já que bytes_file é uma string
+        checksum = int(checksum, 2)
+        i = 0                                                             # inicia o contador
+        for dado in dados:                                                # para cada dado em dados
+            dado = ord(dado)                                              # pega o valor da tabela ascii
+            dados[i] = dado                                               # atualiza a lista
+            i = i + 1                                                     # atualiza contador
 
+        sum_of_checksum = sum(dados) + checksum                           # soma os bytes com o checksum
+        sum_of_checksum = str(bin(sum_of_checksum))[2:]                   # transforma em binario e em string e tira os dois primeiros bytes
+        len_sum = len(sum_of_checksum)                                    # tamanho da soma
+
+        while (len_sum > 16):                                             # checksum tem que ser no maximo de tamanho 16, se não
+            lim = len_sum - 16                                            # bytes mais a esquerda
+            extra = sum_of_checksum[:lim]                                 # separados para a soma
+            sum_of_checksum = sum_of_checksum[lim:]                       # retirados da soma
+            s = bin(int(sum_of_checksum, 2) + int(extra, 2))              # soma dos bits mais a esquerda com o restante
+            sum_of_checksum = str(s)                                      # passado para a string principal
+            sum_of_checksum = sum_of_checksum[2:]                         # os dois primeiros bits '0b' são retirados
+            len_sum = len(sum_of_checksum)                                # o tamanho da string é passado para a variável
+
+        mask = 0xFFFF                                                     # mascara de 16 bits 1
+        sum_of_checksum = int(sum_of_checksum, 2)
+
+        checksum = str(bin(xor(sum_of_checksum, mask)))[2:]               # inversão dos bits com xor e retirada dos dois primeiros bits
+        print(checksum)
+        return checksum
 
     def trata_frame(self, frame):
         inicio_frame = 0                                                  #
@@ -53,9 +81,13 @@ class Server:
         checksum = self.frame[-17:-1]                                     # checksum são os 17 ultimos dados, sem contar com flag final
 
         check_id = self.trata_id(id)                                      # manda o id para a função e rotorna se está certo
-        print(check_id)
+        if check_id == 0: pass                                            # se o retorno for 0, o id está certo, passa para o outro tratamento
+        #else: ..........                                                 # se não, ....
         #self.trata_origem(origem)
-        #self.trata_checksum(dados, checksum)
+        check_checksum = self.trata_checksum(dados, checksum)             # manda os dados e o checksum para o tratamento
+        if check_checksum == 0: pass                                      # se o retorno for 0, significa que o checksum estava certo
+        #else: ..........                                                 # se não, estava errado e ....
+
 
     def receive_msg(self):
         self._socket.listen(5)
