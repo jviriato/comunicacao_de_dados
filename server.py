@@ -17,6 +17,10 @@ class Server:
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.bind(self.destino)
 
+    def trata_frame(self, frame):
+        indices = [i for i, x in enumerate(str(frame)) if x == '@']
+        print(indices)
+        
     def close_connection(self):
         self._socket.close()
 
@@ -28,9 +32,11 @@ class Server:
             c, addr = self._socket.accept()
             print("Conexao de:" + str(addr))
             l = c.recv(1024)
+            self.trata_frame(l)
             while(l):
                 f.write(l)
                 l = c.recv(1024)
+                self.trata_frame(l)
             f.close()
         self.close_connection()
 
