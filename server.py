@@ -20,10 +20,6 @@ class Server:
     def start_connection(self):
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.bind(self.destino)
-
-    def trata_frame(self, frame):
-        indices = [i for i, x in enumerate(str(frame)) if x == '@']
-        print(indices)
         
     def close_connection(self):
         self._socket.close()
@@ -46,6 +42,9 @@ class Server:
         origem = self.frame[2:15]
         checksum = self.frame[-16:-1]
         checksum = int(checksum, 2)
+        print(id)
+        print(origem)
+        print(checksum)
 
 
     def receive_msg(self):
