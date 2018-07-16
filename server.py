@@ -23,30 +23,38 @@ class Server:
         
     def close_connection(self):
         self._socket.close()
+        
+    def trata_id(self, id):
+        id = id.replace('x', '')                                          # remove todos os xs do id
+        if str(bin(self.cont_id + 1))[2:] == id:                          # se o contador + 1 for igual ao do frame atual
+            self.cont_id = self.cont_id + 1                               # está tudo certo e o contador é incrementado
+            return 0
+        else:                                                             # se não, está errado
+            return 1
+
 
     def trata_frame(self, frame):
-        inicio_frame = 0
-        fim_frame = 0
-        frame = frame.decode('UTF-8')
-        frame = str(frame)
-        for i, c in enumerate(frame):
-            if c == '@' and self.achou == 0:
-                inicio_frame = i
-                self.achou = 1
-            elif c == '@' and self.achou == 1 and frame[i-3:i] != 'ESC':
-                fim_frame = i
-        self.frame = frame[inicio_frame:fim_frame + 1]
+        inicio_frame = 0                                                  #
+        fim_frame = 0                                                     #
+        frame = frame.decode('UTF-8')                                     #
+        frame = str(frame)                                                #
+        for i, c in enumerate(frame):                                     #
+            if c == '@' and self.achou == 0:                              #
+                inicio_frame = i                                          #
+                self.achou = 1                                            #
+            elif c == '@' and self.achou == 1 and frame[i-3:i] != 'ESC':  #
+                fim_frame = i                                             #
+        self.frame = frame[inicio_frame:fim_frame + 1]                    #
+                                                                          # conforme apresentado na classe cliente
+        id = self.frame[1:9]                                              # id tem 8 bits, de 1 até 9
+        origem = self.frame[9:25]                                         # origem/destino tem 16 bits, de 9 até 25
+        dados = self.frame[25:-17]                                        # os dados vão de 25 até onde começa o checksum
+        checksum = self.frame[-17:-1]                                     # checksum são os 17 ultimos dados, sem contar com flag final
 
-        print(frame)
-        id = self.frame[1:9]
-        origem = self.frame[9:25]
-        dados = self.frame[25:-17]
-        checksum = self.frame[-17:-1]
-        print(id)
-        print(origem)
-        print(dados)
-        print(checksum)
-        
+        check_id = self.trata_id(id)                                      # manda o id para a função e rotorna se está certo
+        print(check_id)
+        #self.trata_origem(origem)
+        #self.trata_checksum(dados, checksum)
 
     def receive_msg(self):
         self._socket.listen(5)
