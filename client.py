@@ -92,7 +92,7 @@ class Client:
                 i = i + 1                                      # incrementa o contador
         num = "".join(num)                                     # reune a lista
 
-        return int(num)
+        return str(num)
     
 
       # | Flag | ID | Ori/Dest | Data | Checksum | Flag |
