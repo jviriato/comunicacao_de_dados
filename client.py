@@ -122,6 +122,7 @@ class Client:
         frame = frame + self.checksum(bytes_file)              # coloca o checksum no frame
         frame = frame + ini_end                                # frame termina com @
         
+        print(frame)
         frame = frame.encode('UTF-8')
         return frame
 
