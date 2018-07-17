@@ -96,33 +96,33 @@ class Server:
         check_id = self.trata_id(id)                                      # manda o id para a função e retorna se está certo
         if check_id == 1:                                                 # se for igual a 1, frame(s) anterior(es) foi(foram) perdido(s)
             self.frames_perdidos = self.frames_perdidos + 1               # acrescenta a variavel de frames perdidos em 1
-            return
+            return 1
         check_origem = self.trata_origem(origem)                          # manda a origem para a função de tratamento
         if check_origem == 1:                                             # se for igual a 1, frame enviado com erro
             self.frames_com_erro = self.frames_com_erro + 1               # acrescenta a variavel de frames com erro em 1
-            return
+            return 1
         check_checksum = self.trata_checksum(dados, checksum)             # manda os dados e o checksum para o tratamento
         if check_checksum == 1:                                           # se for igual a 1, frame enviado com erro
             self.frames_com_erro = self.frames_com_erro + 1               # acrescenta a variavel de frames com erro em 1
-            return
+            return 1
         
         #não envia ack em nenhum dos casos acima, só a partir de agora
         print(frame)
-        c.send('ack'.encode('UTF-8'))
+        c.send('ack'.encode('UTF-8'))     #enviar id?
+        return 0
         
     def receive_msg(self):
         self._socket.listen(5)
         f = open("rani.jpg", 'wb')
         while True:
-            print("Esperando...")
             c, addr = self._socket.accept()
-            print("Conexao de:" + str(addr))
-            l = c.recv(4096)
-            self.trata_frame(l)
-            while(l):
-                f.write(l)
+            print("Conexao de: " + str(addr))
+            while True:
                 l = c.recv(4096)
-                # self.trata_frame(l)
+                if not l: break
+                ok = self.trata_frame(l, c)
+                if ok == 0:
+                    f.write(l)
         f.close()
         self.close_connection()
 
