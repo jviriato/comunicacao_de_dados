@@ -80,10 +80,17 @@ class Client:
         sum_of_checksum = int(sum_of_checksum, 2)            
 
         checksum = str(bin(xor(sum_of_checksum, mask)))[2:]    # inversão dos bits com xor e retirada dos dois primeiros bits
+        i = len(checksum)
+        if i != 16:                                            # se for menor do que 16
+            checksum = list(checksum)                          # tranforma em uma lista
+            while i != 16:                                     # enquanto for menor que 16
+                checksum.insert(0, 'x')                        # adiciona xs no começo
+                i = i + 1                                      # incrementa o contador
+        checksum = "".join(checksum)                           # reune a lista
         return checksum
     
     def origem_destino(self):
-        ip_porta = self.TCP_IP + str(self.TCP_PORT)            # origem é igual ao ip + porta (as duas são strings e se concatenam)
+        ip_porta = self.TCP_IP + 'x' + str(self.TCP_PORT)      # origem é igual ao ip + porta (as duas são strings e se concatenam)
         
         i = len(ip_porta)                                      # tamanho da string
         if i != 16:                                            # se for != de 16
