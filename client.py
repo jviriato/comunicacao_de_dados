@@ -49,7 +49,6 @@ class Client:
                     if c[:3] == 'ack':        # mandar id junto?
                         print(c)
                         pode_mandar = True
-                    pode_mandar = True
                 except socket.timeout:
                     self._socket.send(frame)
                     self._socket.settimeout(None)
