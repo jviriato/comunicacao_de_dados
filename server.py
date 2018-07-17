@@ -11,7 +11,6 @@ class Server:
         self.TCP_PORT = 5010
         self.destino = (self.TCP_IP, self.TCP_PORT)
 
-        self.achou = 0
         self.frame = None
         self.cont_id = 0
         self.frames_perdidos = 0
@@ -36,6 +35,7 @@ class Server:
     
     def trata_checksum(self, dados, checksum):
         dados = list(dados)                                               # separa os bytes em uma lista, já que bytes_file é uma string
+        checksum = checksum.replace('x', '0')                             # troca os x por 0
         checksum = int(checksum, 2)
         i = 0                                                             # inicia o contador
         for dado in dados:                                                # para cada dado em dados
@@ -75,15 +75,16 @@ class Server:
             return 1
     
     def trata_frame(self, frame):
+        achou = 0
         inicio_frame = 0                                                  # variavel do inicio do frame é inicializada
         fim_frame = 0                                                     # variavel do fim do frame é inicializada
         frame = frame.decode('UTF-8')                                     # frame é decodificado
         frame = str(frame)                                                # variavel é passada para string
         for i, c in enumerate(frame):                                     # para to.do c no frame
-            if c == '@' and self.achou == 0:                              # se c for igual a flag inicial @ e ainda não achou nenhum flag
+            if c == '@' and achou == 0:                              # se c for igual a flag inicial @ e ainda não achou nenhum flag
                 inicio_frame = i                                          # inicio do frame é igual ao indice de c
-                self.achou = 1                                            # e achou é igual a 1
-            elif c == '@' and self.achou == 1 and frame[i-3:i] != 'ESC':  # se achou outra flag, já tinha achado outra antes e as 3 letras anteriores não forem ESC
+                achou = 1                                            # e achou é igual a 1
+            elif c == '@' and achou == 1 and frame[i-3:i] != 'ESC':  # se achou outra flag, já tinha achado outra antes e as 3 letras anteriores não forem ESC
                 fim_frame = i                                             # fim do frame é igual ao indice de c
         self.frame = frame[inicio_frame:fim_frame + 1]                    # coloca os limites no frame
                                                                           
