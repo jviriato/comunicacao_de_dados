@@ -110,7 +110,15 @@ class Server:
         #não envia ack em nenhum dos casos acima, só a partir de agora
         print(frame)
         c.send('ack'.encode('UTF-8'))     #enviar id?
-        return 0
+        return 0, dados
+    
+    def tirabytestuffing(self, d):
+
+        d = str(d)                       # passa para string
+        d2 = d.replace('ESCESC', 'ESC')     # escapa o escape primeiro
+        d3 = d2.replace('ESC@', '@')      # escapa a flag
+
+        return d3
         
     def receive_msg(self):
         self._socket.listen(5)
@@ -121,8 +129,9 @@ class Server:
             while True:
                 l = c.recv(4096)
                 if not l: break
-                ok = self.trata_frame(l, c)
+                ok, d = self.trata_frame(l, c)
                 if ok == 0:
+                    d = self.tirabytestuffing(d)
                     f.write(l)
         f.close()
         self.close_connection()
