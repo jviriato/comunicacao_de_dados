@@ -69,7 +69,7 @@ class Server:
                 break                                                     # já pode sair do for
         ip = origem[:lim]                                                 # a primeira parte é o ip
         porta = origem[lim:].replace('x', '')                             # a segunda parte é a porta, retirando os xs a mais
-        if ip == self.TCP_IP and porta == self.TCP_PORT:
+        if ip == self.TCP_IP and porta == str(self.TCP_PORT):
             return 0
         else:
             return 1
