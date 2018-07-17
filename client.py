@@ -40,14 +40,19 @@ class Client:
             frame = self.delimitacao_frame(bytes_file, id)     # monta o frame
             self._socket.send(frame)                           # manda o frame
             bytes_file = self.file.read(1024)                  # reseta os bytes
+            self._socket.settimeout(6.0)
             pode_mandar = False
             while(not pode_mandar):
                 try:
-                    ACK, address = self._socket.recvfrom(1024)
+                    c, address = self._socket.recvfrom(1024)
+                    c = c.decode('UTF-8')
+                    if c[:3] == 'ack':        # mandar id junto?
+                        print(c)
+                        pode_mandar = True
                     pode_mandar = True
                 except socket.timeout:
-                    self._socket.sendto(frame, dest)
-            print(ACK)
+                    self._socket.send(frame)
+                    self._socket.settimeout(None)
 
         self.close_connection()
 
