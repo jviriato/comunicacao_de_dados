@@ -92,21 +92,22 @@ class Server:
         origem = self.frame[9:25]                                         # origem/destino tem 16 bits, de 9 até 25
         dados = self.frame[25:-17]                                        # os dados vão de 25 até onde começa o checksum
         checksum = self.frame[-17:-1]                                     # checksum são os 17 ultimos dados, sem contar com flag final
+        
         check_id = self.trata_id(id)                                      # manda o id para a função e retorna se está certo
-        if check_id == 0: pass                                            # se o retorno for 0, o id está certo, passa para o outro tratamento
-        else:                                                             # se não, frame(s) anterior(es) foi(foram) perdido(s)
+        if check_id == 1:                                                 # se for igual a 1, frame(s) anterior(es) foi(foram) perdido(s)
             self.frames_perdidos = self.frames_perdidos + 1               # acrescenta a variavel de frames perdidos em 1
-            #não envia ack?
+            return
         check_origem = self.trata_origem(origem)                          # manda a origem para a função de tratamento
-        if check_origem == 0: pass                                        # se o retorno for 0, a origem está certa, passa para o outro tratamento
-        else:                                                             # se não, frame enviado com erro
+        if check_origem == 1:                                             # se for igual a 1, frame enviado com erro
             self.frames_com_erro = self.frames_com_erro + 1               # acrescenta a variavel de frames com erro em 1
+            return
         check_checksum = self.trata_checksum(dados, checksum)             # manda os dados e o checksum para o tratamento
-        if check_checksum == 0: pass                                      # se o retorno for 0, significa que o checksum estava certo
-        else:                                                             # se não, frame enviado com erro
+        if check_checksum == 1:                                           # se for igual a 1, frame enviado com erro
             self.frames_com_erro = self.frames_com_erro + 1               # acrescenta a variavel de frames com erro em 1
+            return
         
         #não envia ack em nenhum dos casos acima, só a partir de agora
+        print(frame)
         c.send('ack'.encode('UTF-8'))
         
     def receive_msg(self):
