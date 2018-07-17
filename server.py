@@ -14,6 +14,7 @@ class Server:
         self.achou = 0
         self.frame = None
         self.cont_id = 0
+        self.frames_com_erro = 0
 
         self.start_connection()
 
@@ -90,7 +91,6 @@ class Server:
         origem = self.frame[9:25]                                         # origem/destino tem 16 bits, de 9 até 25
         dados = self.frame[25:-17]                                        # os dados vão de 25 até onde começa o checksum
         checksum = self.frame[-17:-1]                                     # checksum são os 17 ultimos dados, sem contar com flag final
-
         check_id = self.trata_id(id)                                      # manda o id para a função e retorna se está certo
         if check_id == 0: pass                                            # se o retorno for 0, o id está certo, passa para o outro tratamento
         else:                                                             # se não, frame(s) anterior(es) foi(foram) perdido(s)
@@ -114,6 +114,7 @@ class Server:
             print("Conexao de:" + str(addr))
             l = c.recv(4096)
             self.trata_frame(l)
+            c.send('ack'.encode('UTF-8'))
             while(l):
                 f.write(l)
                 l = c.recv(4096)

@@ -33,12 +33,22 @@ class Client:
     def send_msg(self):
         bytes_file = self.file.read(1024)                      # bytes_file = 1KB do arquivo
         id = 0                                                 # contador para os frames
+        pode_mandar = True
         while (bytes_file):                                    # enquanto restar arquivo
             id = id + 1                                        # incrementa o id
             bytes_file = self.bytestuffing(bytes_file)         # antes de enviar, faz o bytestuffing
             frame = self.delimitacao_frame(bytes_file, id)     # monta o frame
             self._socket.send(frame)                           # manda o frame
             bytes_file = self.file.read(1024)                  # reseta os bytes
+            pode_mandar = False
+            while(not pode_mandar):
+                try:
+                    ACK, address = self._socket.recvfrom(1024)
+                    pode_mandar = True
+                except socket.timeout:
+                    self._socket.sendto(frame, dest)
+            print(ACK)
+
         self.close_connection()
 
     def checksum(self, bytes_file):
@@ -107,7 +117,7 @@ class Client:
         frame = frame + self.checksum(bytes_file)              # coloca o checksum no frame
         frame = frame + ini_end                                # frame termina com @
         
-        frame = frame.encode('UTF-8)
+        frame = frame.encode('UTF-8')
         return frame
 
 def main():
