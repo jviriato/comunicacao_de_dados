@@ -14,6 +14,7 @@ class Server:
         self.achou = 0
         self.frame = None
         self.cont_id = 0
+        self.frames_perdidos = 0
         self.frames_com_erro = 0
 
         self.start_connection()
@@ -105,6 +106,9 @@ class Server:
         else:                                                             # se não, frame enviado com erro
             self.frames_com_erro = self.frames_com_erro + 1               # acrescenta a variavel de frames com erro em 1
         
+        #não envia ack em nenhum dos casos acima, só a partir de agora
+        c.send('ack'.encode('UTF-8'))
+        
     def receive_msg(self):
         self._socket.listen(5)
         f = open("rani.jpg", 'wb')
@@ -114,12 +118,11 @@ class Server:
             print("Conexao de:" + str(addr))
             l = c.recv(4096)
             self.trata_frame(l)
-            c.send('ack'.encode('UTF-8'))
             while(l):
                 f.write(l)
                 l = c.recv(4096)
                 # self.trata_frame(l)
-            f.close()
+        f.close()
         self.close_connection()
 
 def main():
